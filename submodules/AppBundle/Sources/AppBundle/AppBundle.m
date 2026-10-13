@@ -12,6 +12,15 @@ NSBundle * _Nonnull getAppBundle() {
         } else if ([[bundle.bundleURL pathExtension] isEqualToString:@"Frameworks"]) {
             bundle = [NSBundle bundleWithURL:[bundle.bundleURL URLByDeletingLastPathComponent]];
         }
+        // When Telegram is embedded in another app, its resources live in a sub-bundle so they
+        // don't collide with the host app's own resources.
+        NSURL *embeddedBundleUrl = [bundle URLForResource:@"TelegramEmbedded" withExtension:@"bundle"];
+        if (embeddedBundleUrl != nil) {
+            NSBundle *embeddedBundle = [NSBundle bundleWithURL:embeddedBundleUrl];
+            if (embeddedBundle != nil) {
+                bundle = embeddedBundle;
+            }
+        }
         appBundle = bundle;
     });
     

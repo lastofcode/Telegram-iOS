@@ -239,6 +239,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
 }
 
 @objc(AppDelegate) class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, UNUserNotificationCenterDelegate, URLSessionDelegate, URLSessionTaskDelegate {
+    /// True when Telegram runs inside a host app (see TelegramEmbeddedHost) instead of as its own process.
+    /// The host owns the application delegate, notifications, push and background tasks.
+    static var isEmbedded = false
+
     @objc var window: UIWindow?
     var nativeWindow: (UIWindow & WindowHost)?
     var mainWindow: Window1!
@@ -555,7 +559,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         })
         self.clearNotificationsManager = clearNotificationsManager
         
-        let appVersion = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "unknown"
+        let appVersion = (getAppBundle().infoDictionary?["CFBundleShortVersionString"] as? String) ?? "unknown"
         
         let baseAppBundleId = Bundle.main.bundleIdentifier!
         let appGroupName = "group.\(baseAppBundleId)"
@@ -814,7 +818,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             return ContextMenuControllerImpl(arguments)
         }
         
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10.0, *), !AppDelegate.isEmbedded {
             UNUserNotificationCenter.current().delegate = self
         }
         
@@ -952,7 +956,9 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 }
             })
         }, requestSiriAuthorization: { completion in
-            if #available(iOS 10, *) {
+            if AppDelegate.isEmbedded {
+                completion(false)
+            } else if #available(iOS 10, *) {
                 INPreferences.requestSiriAuthorization { status in
                     if case .authorized = status {
                         completion(true)
@@ -964,7 +970,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 completion(false)
             }
         }, siriAuthorization: {
-            if buildConfig.isSiriEnabled {
+            if buildConfig.isSiriEnabled && !AppDelegate.isEmbedded {
                 if #available(iOS 10, *) {
                     switch INPreferences.siriAuthorizationStatus() {
                     case .authorized:
@@ -1094,12 +1100,14 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             return true
         }
 
-        let pushRegistry = PKPushRegistry(queue: .main)
-        if #available(iOS 9.0, *) {
-            pushRegistry.desiredPushTypes = Set([.voIP])
+        if !AppDelegate.isEmbedded {
+            let pushRegistry = PKPushRegistry(queue: .main)
+            if #available(iOS 9.0, *) {
+                pushRegistry.desiredPushTypes = Set([.voIP])
+            }
+            self.pushRegistry = pushRegistry
+            pushRegistry.delegate = self
         }
-        self.pushRegistry = pushRegistry
-        pushRegistry.delegate = self
 
         self.accountManagerState = extractAccountManagerState(records: accountManager._internalAccountRecordsSync())
         let _ = (accountManager.accountRecords()
@@ -1602,7 +1610,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         }
         #endif
         
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, *), !AppDelegate.isEmbedded {
             let cleanupTaskId = "\(baseAppBundleId).cleanup"
             
             BGTaskScheduler.shared.register(forTaskWithIdentifier: cleanupTaskId, using: DispatchQueue.main) { task in
@@ -1649,10 +1657,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             })
         }
         
-        if #available(iOS 12.0, *) {
+        if #available(iOS 12.0, *), !AppDelegate.isEmbedded {
             UIApplication.shared.registerForRemoteNotifications()
         }
-        
+
         let _ = self.urlSession(identifier: "\(baseAppBundleId).backroundSession")
         
         var previousReportedMemoryConsumption = 0
@@ -1758,6 +1766,27 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     }
 
     func attach(scene: UIWindowScene, connectionOptions: UIScene.ConnectionOptions) {
+        self.attachWindow(to: scene)
+
+        for context in connectionOptions.urlContexts {
+            let url = context.url
+            if let buildConfig = self.buildConfig, url.scheme == "tg" || url.scheme == "ton" || url.scheme == buildConfig.appSpecificUrlScheme || WalletContext.isTonConnectUrl(url.absoluteString) {
+                self.openUrlWhenReady(url: url, external: true)
+            } else {
+                self.handleOpenURL(url)
+            }
+        }
+
+        for userActivity in connectionOptions.userActivities {
+            self.handleUserActivity(userActivity)
+        }
+
+        if let shortcutItem = connectionOptions.shortcutItem {
+            self.handleShortcutItem(shortcutItem, completionHandler: { _ in })
+        }
+    }
+
+    func attachWindow(to scene: UIWindowScene) {
         self.statusBarHost?.scene = scene
         self.window?.windowScene = scene
 
@@ -1783,23 +1812,6 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
 
         self.mainWindow?.updateDeviceMetrics()
         self.window?.makeKeyAndVisible()
-
-        for context in connectionOptions.urlContexts {
-            let url = context.url
-            if let buildConfig = self.buildConfig, url.scheme == "tg" || url.scheme == "ton" || url.scheme == buildConfig.appSpecificUrlScheme || WalletContext.isTonConnectUrl(url.absoluteString) {
-                self.openUrlWhenReady(url: url, external: true)
-            } else {
-                self.handleOpenURL(url)
-            }
-        }
-
-        for userActivity in connectionOptions.userActivities {
-            self.handleUserActivity(userActivity)
-        }
-
-        if let shortcutItem = connectionOptions.shortcutItem {
-            self.handleShortcutItem(shortcutItem, completionHandler: { _ in })
-        }
     }
     
     private var backgroundSessionSourceDataDisposables: [String: Disposable] = [:]
@@ -3100,6 +3112,9 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     }
     
     func requestNotificationTokenInvalidation() {
+        if AppDelegate.isEmbedded {
+            return
+        }
         UIApplication.shared.unregisterForRemoteNotifications()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0, execute: {
             UIApplication.shared.registerForRemoteNotifications()
@@ -3118,6 +3133,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     }
 
     private func registerForNotifications(replyString: String, messagePlaceholderString: String, hiddenContentString: String, hiddenReactionContentString: String, hiddenStoryContentString: String, hiddenStoryReactionContentString: String, includeNames: Bool, authorize: Bool = true, completion: @escaping (Bool) -> Void = { _ in }) {
+        if AppDelegate.isEmbedded {
+            completion(false)
+            return
+        }
         let notificationCenter = UNUserNotificationCenter.current()
         Logger.shared.log("App \(self.episodeId)", "register for notifications: get settings (authorize: \(authorize))")
         notificationCenter.getNotificationSettings(completionHandler: { settings in
@@ -3252,7 +3271,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                     guard let releaseNotesUrl = dict["url"] as? String else {
                         return
                     }
-                    guard let currentVersionString = Bundle.main.infoDictionary?["CFBundleVersion"] as? String, let currentVersion = Int(currentVersionString) else {
+                    guard let currentVersionString = getAppBundle().infoDictionary?["CFBundleVersion"] as? String, let currentVersion = Int(currentVersionString) else {
                         return
                     }
                     if currentVersion < version {

@@ -392,13 +392,15 @@ func managedSynchronizeAvailableReactions(postbox: Postbox, network: Network) ->
         "star_reaction_center.tgs": \.centerAnimation,
         "star_reaction_effect.tgs": \.aroundAnimation
     ]
+    // TelegramCore is shared with macOS and doesn't depend on AppBundle, so look for the embedded resource bundle here.
+    let resourceBundle = Bundle.main.url(forResource: "TelegramEmbedded", withExtension: "bundle").flatMap(Bundle.init(url:)) ?? Bundle.main
     for (key, path) in mapping {
-        if let filePath = Bundle.main.path(forResource: key, ofType: nil), let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) {
+        if let filePath = resourceBundle.path(forResource: key, ofType: nil), let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) {
             postbox.mediaBox.storeResourceData(starsReaction[keyPath: path]._parse().resource.id, data: data)
         }
     }
     for (key, path) in optionalMapping {
-        if let filePath = Bundle.main.path(forResource: key, ofType: nil), let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) {
+        if let filePath = resourceBundle.path(forResource: key, ofType: nil), let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) {
             if let file = starsReaction[keyPath: path] {
                 postbox.mediaBox.storeResourceData(file._parse().resource.id, data: data)
             }

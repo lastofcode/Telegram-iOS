@@ -1,4 +1,5 @@
 #import <LegacyComponents/TGLocalization.h>
+#import <AppBundle/AppBundle.h>
 
 #import <LegacyComponents/TGPluralization.h>
 
@@ -13,7 +14,7 @@ static NSDictionary *fallbackDict(NSString *code) {
     });
     NSDictionary *dict = dicts[code];
     if (dict == nil) {
-        NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:code ofType:@"lproj"]];
+        NSBundle *bundle = [NSBundle bundleWithPath:[getAppBundle() pathForResource:code ofType:@"lproj"]];
         NSString *path = [bundle pathForResource:@"Localizable" ofType:@"strings"];
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
         if (dict == nil) {

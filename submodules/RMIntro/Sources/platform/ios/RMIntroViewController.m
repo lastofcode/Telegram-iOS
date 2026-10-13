@@ -18,6 +18,7 @@
 #import <SSignalKit/SSignalKit.h>
 
 #import <LegacyComponents/LegacyComponents.h>
+#import <AppBundle/AppBundle.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -145,7 +146,7 @@ typedef enum {
         ];
         
         NSMutableDictionary *englishStrings = [[NSMutableDictionary alloc] init];
-        NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"en" ofType:@"lproj"]];
+        NSBundle *bundle = [NSBundle bundleWithPath:[getAppBundle() pathForResource:@"en" ofType:@"lproj"]];
         for (NSString *key in stringKeys) {
             if (bundle != nil) {
                 NSString *value = [bundle localizedStringForKey:key value:key table:nil];

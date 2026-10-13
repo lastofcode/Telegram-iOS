@@ -28,6 +28,7 @@ objc_library(
     ],
     deps = [
         "//submodules/LegacyComponents:LegacyComponents",
+        "//submodules/AppBundle:AppBundle",
     ],
     sdk_frameworks = [
         "Foundation",

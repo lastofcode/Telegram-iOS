@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import AppBundle
 
 private func loadToneData(name: String, addSilenceDuration: Double = 0.0) -> Data? {
     let outputSettings: [String: Any] = [
@@ -24,7 +25,7 @@ private func loadToneData(name: String, addSilenceDuration: Double = 0.0) -> Dat
         nameExtension = pathExtension
     }
     
-    guard let url = Bundle.main.url(forResource: baseName, withExtension: nameExtension) else {
+    guard let url = getAppBundle().url(forResource: baseName, withExtension: nameExtension) else {
         return nil
     }
     

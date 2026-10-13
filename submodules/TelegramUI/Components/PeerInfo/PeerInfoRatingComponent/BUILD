@@ -14,6 +14,7 @@ swift_library(
         "//submodules/ComponentFlow",
         "//submodules/Components/MultilineTextComponent",
         "//submodules/Svg",
+        "//submodules/AppBundle",
     ],
     visibility = [
         "//visibility:public",

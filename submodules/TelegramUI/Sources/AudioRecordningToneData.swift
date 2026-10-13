@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import AppBundle
 
 private func loadAudioRecordingToneData() -> Data? {
     let outputSettings: [String: Any] = [
@@ -11,7 +12,7 @@ private func loadAudioRecordingToneData() -> Data? {
         AVLinearPCMIsBigEndianKey: false as NSNumber
     ]
     
-    guard let url = Bundle.main.url(forResource: "begin_record", withExtension: "mp3") else {
+    guard let url = getAppBundle().url(forResource: "begin_record", withExtension: "mp3") else {
         return nil
     }
     

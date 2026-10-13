@@ -4,6 +4,7 @@ import Display
 import ComponentFlow
 import MultilineTextComponent
 import Svg
+import AppBundle
 
 private func generateNumberOffsets() -> [CGPoint] {
     return [
@@ -342,7 +343,7 @@ public final class PeerInfoRatingComponent: Component {
                         return
                     }
                     
-                    if let url = Bundle.main.url(forResource: "profile_level\(levelIndex)_outer", withExtension: "svg"), let data = try? Data(contentsOf: url) {
+                    if let url = getAppBundle().url(forResource: "profile_level\(levelIndex)_outer", withExtension: "svg"), let data = try? Data(contentsOf: url) {
                         if let image = generateTintedImage(image: drawSvgImage(data: data, size: size, backgroundColor: nil, foregroundColor: nil, scale: 0.0, opaque: false), color: component.borderColor) {
                             image.draw(in: CGRect(origin: CGPoint(x: 0.0, y: backgroundOffsetsY[levelIndex] ?? 0.0), size: size), blendMode: .normal, alpha: 1.0)
                         }
@@ -371,7 +372,7 @@ public final class PeerInfoRatingComponent: Component {
                         return
                     }
                     
-                    if let url = Bundle.main.url(forResource: "profile_level\(levelIndex)_inner", withExtension: "svg"), let data = try? Data(contentsOf: url) {
+                    if let url = getAppBundle().url(forResource: "profile_level\(levelIndex)_inner", withExtension: "svg"), let data = try? Data(contentsOf: url) {
                         if let image = generateTintedImage(image: drawSvgImage(data: data, size: size, backgroundColor: nil, foregroundColor: nil, scale: 0.0, opaque: false), color: component.backgroundColor) {
                             image.draw(in: CGRect(origin: CGPoint(x: 0.0, y: backgroundOffsetsY[levelIndex] ?? 0.0), size: size), blendMode: .normal, alpha: 1.0)
                         }

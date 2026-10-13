@@ -13,8 +13,24 @@
 #import <AsyncDisplayKit/_ASAsyncTransaction.h>
 #import <AsyncDisplayKit/_ASAsyncTransactionGroup.h>
 
+#import <objc/runtime.h>
+
+// These properties used to be @dynamic, relying on CALayer to generate their storage. CALayer only
+// collects @dynamic properties when the class is first initialized, so if this code is loaded after
+// the process has already used CALayer (Telegram embedded with dlopen), the accessors never exist.
+static char kAsyncLayerTransactionsKey;
+static char kCurrentAsyncTransactionKey;
+static char kAsyncTransactionContainerKey;
+
 @implementation CALayer (ASAsyncTransactionContainerTransactions)
-@dynamic asyncdisplaykit_asyncLayerTransactions;
+
+- (NSHashTable<_ASAsyncTransaction *> *)asyncdisplaykit_asyncLayerTransactions {
+  return objc_getAssociatedObject(self, &kAsyncLayerTransactionsKey);
+}
+
+- (void)asyncdisplaykit_setAsyncLayerTransactions:(NSHashTable<_ASAsyncTransaction *> *)transactions {
+  objc_setAssociatedObject(self, &kAsyncLayerTransactionsKey, transactions, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
 // No-ops in the base class. Mostly exposed for testing.
 - (void)asyncdisplaykit_asyncTransactionContainerWillBeginTransaction:(_ASAsyncTransaction *)transaction {}
@@ -22,8 +38,22 @@
 @end
 
 @implementation CALayer (ASAsyncTransactionContainer)
-@dynamic asyncdisplaykit_currentAsyncTransaction;
-@dynamic asyncdisplaykit_asyncTransactionContainer;
+
+- (_ASAsyncTransaction *)asyncdisplaykit_currentAsyncTransaction {
+  return objc_getAssociatedObject(self, &kCurrentAsyncTransactionKey);
+}
+
+- (void)asyncdisplaykit_setCurrentAsyncTransaction:(_ASAsyncTransaction *)transaction {
+  objc_setAssociatedObject(self, &kCurrentAsyncTransactionKey, transaction, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)asyncdisplaykit_isAsyncTransactionContainer {
+  return [objc_getAssociatedObject(self, &kAsyncTransactionContainerKey) boolValue];
+}
+
+- (void)asyncdisplaykit_setAsyncTransactionContainer:(BOOL)isContainer {
+  objc_setAssociatedObject(self, &kAsyncTransactionContainerKey, isContainer ? @YES : nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
 - (ASAsyncTransactionContainerState)asyncdisplaykit_asyncTransactionContainerState
 {

@@ -10,6 +10,7 @@ import OpusBinding
 import ChatPresentationInterfaceState
 import AudioWaveform
 import FFMpegBinding
+import AppBundle
 
 private let kOutputBus: UInt32 = 0
 private let kInputBus: UInt32 = 1
@@ -138,7 +139,7 @@ private func rendererInputProc(refCon: UnsafeMutableRawPointer, ioActionFlags: U
 }
 
 private let beginToneData: TonePlayerData? = {
-    guard let url = Bundle.main.url(forResource: "begin_record", withExtension: "mp3") else {
+    guard let url = getAppBundle().url(forResource: "begin_record", withExtension: "mp3") else {
         return nil
     }
     return loadTonePlayerData(path: url.path)
