@@ -306,6 +306,8 @@ class BazelCommandLine:
         combined_arguments += self.common_build_args
         combined_arguments += self.get_define_arguments()
         combined_arguments += self.get_additional_build_arguments()
+        if self.additional_args is not None:
+            combined_arguments += self.additional_args
 
         if self.remote_cache is not None:
             combined_arguments += [
@@ -654,6 +656,9 @@ def build(bazel, arguments):
 
     if arguments.lock:
         bazel_command_line.set_lock(True)
+
+    if arguments.bazelArguments is not None:
+        bazel_command_line.add_additional_args(shlex.split(arguments.bazelArguments))
 
     if arguments.cacheDir is not None:
         bazel_command_line.add_cache_dir(arguments.cacheDir)
