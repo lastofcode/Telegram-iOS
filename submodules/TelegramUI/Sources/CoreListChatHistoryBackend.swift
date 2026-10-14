@@ -2036,7 +2036,7 @@ private final class CoreListNodeHostView: UIView, CoreListItemView {
                 itemNode.apparentHeight = height
                 self.lastHeight = height
             } else {
-                telegramPrint("[CoreList] async-only item, no synchronous node: \(type(of: self.listItem))")
+                contentDebugPrint("[CoreList] async-only item, no synchronous node: \(type(of: self.listItem))")
                 self.lastHeight = 0.0
             }
         } else {
@@ -2070,7 +2070,7 @@ private final class CoreListNodeHostView: UIView, CoreListItemView {
                 self.addSubview(node.view)
                 self.lastHeight = height
             } else {
-                telegramPrint("[CoreList] async-only item, no synchronous node: \(type(of: listItem))")
+                contentDebugPrint("[CoreList] async-only item, no synchronous node: \(type(of: listItem))")
                 self.lastHeight = 0.0
             }
         }

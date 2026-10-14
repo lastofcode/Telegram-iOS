@@ -4677,7 +4677,7 @@ final class PostboxImpl {
 }
 
 public class Postbox {
-    public static let sharedQueue = Queue(name: "org.telegram.postbox.Postbox")
+    public static let sharedQueue = Queue(name: "app.content.storage")
     
     let queue: Queue
     private let impl: QueueLocalObject<PostboxImpl>

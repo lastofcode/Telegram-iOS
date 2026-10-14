@@ -108,7 +108,7 @@ public func fetchCachedResourceRepresentation(account: Account, resource: MediaR
                 /*let reader = FFMpegFileReader(source: .resource(mediaBox: account.postbox.mediaBox, resource: resource, resourceSize: size, mappedRanges: [0 ..< size]), useHardwareAcceleration: false, selectedStream: .mediaType(.video), seek: nil, maxReadablePts: nil)
                 reader?.readFrame()
                 
-                telegramPrint("ready to fetch \(representation.prefixLength)")*/
+                contentDebugPrint("ready to fetch \(representation.prefixLength)")*/
                 
                 return ActionDisposable {
                     disposable.dispose()

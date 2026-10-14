@@ -465,7 +465,7 @@ func multipartUpload(network: Network, postbox: Postbox, source: MultipartUpload
                     headerSize = 1024
                     dataSignal = signal
                     |> map { data in
-                        telegramPrint("**data \(data) \(data.complete)")
+                        contentDebugPrint("**data \(data) \(data.complete)")
                         return MultipartUploadData.resourceData(data)
                     }
                     fetchedResource = .complete()

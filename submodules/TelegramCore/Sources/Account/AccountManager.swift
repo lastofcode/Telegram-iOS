@@ -278,7 +278,7 @@ private func removeUnknownAppGroupDirectories(appGroupPath: String) {
     }
 }
 
-/// Whether Telegram runs inside a host app's process (see TelegramEmbeddedHost) rather than as
+/// Whether this content runs inside a host app's process rather than as
 /// its own app. Set before anything reads the root path. The app group then belongs to the host:
 /// Telegram keeps its data under a neutral directory name and leaves the host's directories alone.
 public enum EmbeddedInHostApp {
@@ -310,7 +310,7 @@ public func performAppGroupUpgrades(appGroupPath: String, rootPath: String) {
         var mutableUrl = URL(fileURLWithPath: rootPath)
         try mutableUrl.setResourceValues(resourceValues)
     } catch let e {
-        telegramPrint("\(e)")
+        contentDebugPrint("\(e)")
     }
 }
 

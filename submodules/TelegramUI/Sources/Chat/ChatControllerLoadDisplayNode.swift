@@ -662,7 +662,7 @@ extension ChatControllerImpl {
                 measure_isFirstTime = false
                 #if DEBUG
                 let deltaTime = (CFAbsoluteTimeGetCurrent() - initTimestamp) * 1000.0
-                telegramPrint("Chat controller init to ready: \(deltaTime) ms")
+                contentDebugPrint("Chat controller init to ready: \(deltaTime) ms")
                 #endif
             }
         })

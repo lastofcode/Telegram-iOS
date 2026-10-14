@@ -793,7 +793,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             logger.logToConsole = false
             logger.shortLogToFile = false
             Logger.setSharedLogger(logger)
-            CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["telegram-contacts"], completionHandler: { _ in })
+            CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["telegram-contacts", "embedded-contacts"], completionHandler: { _ in })
         } else {
             let _ = try? FileManager.default.createDirectory(atPath: logsPath, withIntermediateDirectories: true, attributes: nil)
             Logger.setSharedLogger(Logger(rootPath: rootPath, basePath: logsPath))
@@ -1101,7 +1101,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
 
             let window = self.window!
 
-            telegramPrint("[DeleteAccount] starting for +\(digits)")
+            contentDebugPrint("[DeleteAccount] starting for +\(digits)")
             let _ = test_loginAndDeleteAccount(
                 rootPath: rootPath,
                 accountManager: accountManager,
@@ -1110,10 +1110,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 phoneNumber: "+\(digits)",
                 phoneCode: phoneCode
             ).start(error: { error in
-                telegramPrint("[DeleteAccount] error: \(error)")
+                contentDebugPrint("[DeleteAccount] error: \(error)")
                 preconditionFailure("test_loginAndDeleteAccount failed")
             }, completed: {
-                telegramPrint("[DeleteAccount] completed")
+                contentDebugPrint("[DeleteAccount] completed")
                 DispatchQueue.main.async {
                     window.accessibilityIdentifier = "DeleteAccount.Success"
                 }
@@ -1256,10 +1256,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             let wakeupManager = SharedWakeupManager(beginBackgroundTask: { name, expiration in
                 let id = application.beginBackgroundTask(withName: name, expirationHandler: expiration)
                 Logger.shared.log("App \(self.episodeId)", "Begin background task \(name): \(id)")
-                telegramPrint("App \(self.episodeId) Begin background task \(name): \(id)")
+                contentDebugPrint("App \(self.episodeId) Begin background task \(name): \(id)")
                 return id
             }, endBackgroundTask: { id in
-                telegramPrint("App \(self.episodeId) End background task \(id)")
+                contentDebugPrint("App \(self.episodeId) End background task \(id)")
                 Logger.shared.log("App \(self.episodeId)", "End background task \(id)")
                 application.endBackgroundTask(id)
             }, backgroundTimeRemaining: { application.backgroundTimeRemaining }, acquireIdleExtension: {
@@ -1394,7 +1394,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         let startTime = CFAbsoluteTimeGetCurrent()
         self.contextDisposable.set((self.context.get()
         |> deliverOnMainQueue).start(next: { context in
-            telegramPrint("Application: context took \(CFAbsoluteTimeGetCurrent() - startTime) to become available")
+            contentDebugPrint("Application: context took \(CFAbsoluteTimeGetCurrent() - startTime) to become available")
             
             var network: Network?
             if let context = context {
@@ -1419,9 +1419,9 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 |> deliverOnMainQueue).start(next: { _ in
                     let readyTime = CFAbsoluteTimeGetCurrent() - startTime
                     if readyTime > 0.5 {
-                        telegramPrint("Application: context took \(readyTime) to become ready")
+                        contentDebugPrint("Application: context took \(readyTime) to become ready")
                     }
-                    telegramPrint("Launch to ready took \((CFAbsoluteTimeGetCurrent() - launchStartTime) * 1000.0) ms")
+                    contentDebugPrint("Launch to ready took \((CFAbsoluteTimeGetCurrent() - launchStartTime) * 1000.0) ms")
 
                     self.mainWindow.debugAction = nil
                     self.mainWindow.viewController = context.rootController
@@ -1764,7 +1764,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                         |> runOn(.mainQueue())
                         |> delay(Double.random(in: 1.0 ..< 5.0), queue: Queue.mainQueue())
                         runReflectorBenchmarkDisposable.set(signal.startStrict(next: { results in
-                            telegramPrint("Reflector banchmark:\nBandwidth: \(results.bandwidthBytesPerSecond * 8 / 1024) kbit/s (expected \(results.expectedBandwidthBytesPerSecond * 8 / 1024) kbit/s)\nAvg latency: \(Int(results.averageDelay * 1000.0)) ms")
+                            contentDebugPrint("Reflector banchmark:\nBandwidth: \(results.bandwidthBytesPerSecond * 8 / 1024) kbit/s (expected \(results.expectedBandwidthBytesPerSecond * 8 / 1024) kbit/s)\nAvg latency: \(Int(results.averageDelay * 1000.0)) ms")
                         }))
                     } else {
                         runReflectorBenchmarkDisposable.set(nil)

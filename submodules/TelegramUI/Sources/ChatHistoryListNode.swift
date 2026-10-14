@@ -2077,7 +2077,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                 measure_isFirstTime = false
                 #if DEBUG
                 let deltaTime = (CFAbsoluteTimeGetCurrent() - startTime) * 1000.0
-                telegramPrint("Chat load time: \(deltaTime) ms")
+                contentDebugPrint("Chat load time: \(deltaTime) ms")
                 #endif
             }
             
@@ -2238,7 +2238,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                             strongSelf.didSetReady = true
                             #if DEBUG
                             let deltaTime = (CFAbsoluteTimeGetCurrent() - strongSelf.initTimestamp) * 1000.0
-                            telegramPrint("Chat init to dequeue time: \(deltaTime) ms")
+                            contentDebugPrint("Chat init to dequeue time: \(deltaTime) ms")
                             #endif
                         }
                     }
@@ -3641,7 +3641,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
             self.isSettingTopReplyThreadMessageShown = false
         } else {
             #if DEBUG
-            telegramPrint("Ignore repeated isTopReplyThreadMessageShown update")
+            contentDebugPrint("Ignore repeated isTopReplyThreadMessageShown update")
             #endif
         }
         self.updateTopVisibleMessageRange(topVisibleMessageRange)
@@ -4700,7 +4700,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                     strongSelf.didSetReady = true
                     #if DEBUG
                     let deltaTime = (CFAbsoluteTimeGetCurrent() - strongSelf.initTimestamp) * 1000.0
-                    telegramPrint("Chat init to dequeue time: \(deltaTime) ms")
+                    contentDebugPrint("Chat init to dequeue time: \(deltaTime) ms")
                     #endif
                 }
             }

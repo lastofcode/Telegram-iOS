@@ -913,7 +913,7 @@ private func validateBatch(postbox: Postbox, network: Network, transaction: Tran
                                     })
                                     
                                     if previous[id] == nil {
-                                        telegramPrint("\(id) missing")
+                                        contentDebugPrint("\(id) missing")
                                     }
                                 } else {
                                     let _ = transaction.addMessages([message], location: .Random)
@@ -1157,7 +1157,7 @@ private func validateReplyThreadBatch(postbox: Postbox, network: Network, transa
                                 })
                                 
                                 if previous[id] == nil {
-                                    telegramPrint("\(id) missing")
+                                    contentDebugPrint("\(id) missing")
                                 }
                             } else {
                                 let _ = transaction.addMessages([message], location: .Random)

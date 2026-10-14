@@ -443,7 +443,7 @@ final class PendingStoryManager {
                 self.currentPendingItemContext = nil
                 self.queue.after(0.1, {
                     let _ = currentPendingItemContext
-                    telegramPrint("\(currentPendingItemContext)")
+                    contentDebugPrint("\(currentPendingItemContext)")
                 })
             }
             self.queuedPendingItems = Set(localState.items.compactMap { item -> PeerId? in

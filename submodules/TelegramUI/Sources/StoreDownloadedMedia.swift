@@ -179,7 +179,7 @@ private final class DownloadedMediaStoreContext {
                             }
                         }, completionHandler: { _, error in
                             if let error = error {
-                                telegramPrint("\(error)")
+                                contentDebugPrint("\(error)")
                             }
                             TempBox.shared.dispose(tempFile)
                         })

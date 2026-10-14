@@ -740,7 +740,7 @@ public final class NetworkTelemetry {
     private let stalledAfter: Double
     private let watchShift: Int
     private let store: NetworkTelemetryStore?
-    private let flushQueue = Queue(name: "org.telegram.NetworkTelemetry", qos: .utility)
+    private let flushQueue = Queue(name: "app.content.network-telemetry", qos: .utility)
     private let startedAt: Double
     private let layer: Int32
     private let app: String
@@ -1656,7 +1656,7 @@ private final class NetworkTelemetryStore {
     static let trimAtLines = NetworkTelemetry.maxFailureRecords * 2
 
     private let directory: String
-    private let queue = Queue(name: "org.telegram.NetworkTelemetryStore", qos: .utility)
+    private let queue = Queue(name: "app.content.network-telemetry-store", qos: .utility)
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase

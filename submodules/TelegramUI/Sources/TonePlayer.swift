@@ -35,7 +35,7 @@ private final class TonePlayerContext {
         self.audioEngine.attach(self.playerNode)
         self.audioEngine.connect(self.playerNode, to: self.audioEngine.mainMixerNode, format: nil)
         let gainFactor = self.initialVolume
-        telegramPrint("gain \(gainFactor)")
+        contentDebugPrint("gain \(gainFactor)")
         self.audioEngine.mainMixerNode.outputVolume = gainFactor
         self.audioEngine.prepare()
     }
@@ -56,7 +56,7 @@ private final class TonePlayerContext {
                 completion()
             }
         } catch let e {
-            telegramPrint("Couldn't start tone engine: \(e)")
+            contentDebugPrint("Couldn't start tone engine: \(e)")
         }
     }
     

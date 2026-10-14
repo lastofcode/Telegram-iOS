@@ -40,7 +40,7 @@ private final class SpotlightIndexStorage {
         self.reload()
         
         if self.items.isEmpty {
-            CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["telegram-contacts"], completionHandler: { _ in })
+            CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["telegram-contacts", "embedded-contacts"], completionHandler: { _ in })
         }
     }
     
@@ -121,7 +121,7 @@ private final class SpotlightIndexStorage {
                     continue
                 }
                 
-                telegramPrint("Spotlight: updating \(item.firstName) \(item.lastName)")
+                contentDebugPrint("Spotlight: updating \(item.firstName) \(item.lastName)")
                 let path = self.path(peerId: peerId)
                 let _ = try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
                 
@@ -159,7 +159,7 @@ private final class SpotlightIndexStorage {
                     attributeSet.title = item.lastName
                 }
                 attributeSet.thumbnailURL = resolvedAvatarPath.flatMap(URL.init(fileURLWithPath:))
-                let indexItem = CSSearchableItem(uniqueIdentifier: "contact-\(peerId.toInt64())", domainIdentifier: "telegram-contacts", attributeSet: attributeSet)
+                let indexItem = CSSearchableItem(uniqueIdentifier: "contact-\(peerId.toInt64())", domainIdentifier: "embedded-contacts", attributeSet: attributeSet)
                 addToIndexItems.append(indexItem)
                 
                 encodeItem.avatarSourcePath = updatedAvatarSourcePath

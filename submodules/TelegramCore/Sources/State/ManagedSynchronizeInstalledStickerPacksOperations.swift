@@ -445,7 +445,7 @@ func debugFetchAllStickers(account: Account) -> Signal<Never, NoError> {
         var loadFileSignals: [Signal<Never, NoError>] = []
         
         let tempDir = TempBox.shared.tempDirectory()
-        telegramPrint("debugFetchAllStickers into \(tempDir.path)")
+        contentDebugPrint("debugFetchAllStickers into \(tempDir.path)")
         
         for file in files {
             loadFileSignals.append(Signal { subscriber in

@@ -5,9 +5,9 @@ import TelegramApi
 import NetworkLogging
 import ManagedFile
 
-private let queue = DispatchQueue(label: "org.telegram.Telegram.trace", qos: .utility)
+private let queue = DispatchQueue(label: "app.content.trace", qos: .utility)
 
-public func telegramPrint(_ value: @autoclosure () -> String) {
+public func contentDebugPrint(_ value: @autoclosure () -> String) {
     guard !EmbeddedInHostApp.isEnabled else {
         return
     }
@@ -86,7 +86,7 @@ private var sharedLogger: Logger?
 private let binaryEventMarker: UInt64 = 0xcadebabef00dcafe
 
 public final class Logger {
-    private let queue = Queue(name: "org.telegram.Telegram.log", qos: .utility)
+    private let queue = Queue(name: "app.content.log", qos: .utility)
     private let maxLength: Int = 2 * 1024 * 1024
     private let maxShortLength: Int = 1 * 1024 * 1024
     private let maxFiles: Int = 20
