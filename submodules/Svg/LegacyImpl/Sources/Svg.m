@@ -717,7 +717,6 @@ UIImage * _Nullable renderPreparedImageWithSymbol(NSData * _Nonnull data, CGSize
         return nil;
     }
     
-    CFTimeInterval startTime = CACurrentMediaTime();
     UIColor *foregroundColor = [UIColor whiteColor];
     
     NSUInteger ptr = 0;
@@ -842,9 +841,6 @@ UIImage * _Nullable renderPreparedImageWithSymbol(NSData * _Nonnull data, CGSize
     UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    CFTimeInterval deltaTime = CACurrentMediaTime() - startTime;
-    NSLog(@"Render time %.0fx%.0f = %.4f seconds", size.width, size.height, deltaTime);
-    
     return resultImage;
 }
 
@@ -933,7 +929,6 @@ void processShape(NSVGshape *shape, CGContextCoder *context, bool template) {
 NSData * _Nullable prepareSvgImage(NSData * _Nonnull data, BOOL template) {
     if (!data || data.length == 0) return nil;
     
-    CFTimeInterval startTime = CACurrentMediaTime();
     
     NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
     if (!parser) return nil;
@@ -968,10 +963,6 @@ NSData * _Nullable prepareSvgImage(NSData * _Nonnull data, BOOL template) {
         return nil;
     }
     
-    CFTimeInterval parseTime = CACurrentMediaTime() - startTime;
-    NSLog(@"Parse time: %.4f seconds", parseTime);
-    
-    startTime = CACurrentMediaTime();
     CGContextCoder *context = [[CGContextCoder alloc] initWithSize:CGSizeMake(image->width, image->height)];
     
     for (NSVGshape *shape = image->shapes; shape; shape = shape->next) {
@@ -983,9 +974,6 @@ NSData * _Nullable prepareSvgImage(NSData * _Nonnull data, BOOL template) {
     nsvgDelete(image);
     
     [context storeGiftPatternRects:delegate.giftRects];
-    
-    CFTimeInterval prepTime = CACurrentMediaTime() - startTime;
-    NSLog(@"Preparation time: %.4f seconds", prepTime);
     
     return context.data;
 }

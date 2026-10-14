@@ -185,7 +185,6 @@ private final class UniversalSoftwareVideoSourceImpl {
             return nil
         }
         
-        print("Header read in \(self.currentReadBytes) bytes")
         self.currentReadBytes = 0
         
         self.avFormatContext = avFormatContext
@@ -304,7 +303,6 @@ private final class UniversalSoftwareVideoSourceImpl {
             let (decodableFrame, loop) = self.readDecodableFrame()
             if let decodableFrame = decodableFrame {
                 if let renderedFrame = videoStream.decoder.render(frame: decodableFrame) {
-                    print("Frame rendered in \(self.currentNumberOfReads) reads, \(self.currentReadBytes) bytes, total frames read: \(i + 1)")
                     return (renderedFrame, CGFloat(videoStream.rotationAngle), CGFloat(videoStream.aspect), loop)
                 }
             }

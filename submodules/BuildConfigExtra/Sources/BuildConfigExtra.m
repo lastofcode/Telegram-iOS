@@ -110,8 +110,6 @@ static MTPKCS * _Nullable parseSignature(const char* buffer, size_t size) {
         
         if (OSSwapBigToHostInt32(blob.magic) == 0xfade0b01) // signature
         {
-            printf("Embedded signature, length: %d\n", OSSwapBigToHostInt32(blob.length));
-            
             if (OSSwapBigToHostInt32(blob.length) != 8)
             {
                 const unsigned char* message = (const unsigned char*)buffer + offset + 8;
@@ -144,11 +142,6 @@ static MTPKCS * _Nullable parseArch(const char* buffer, size_t size) {
             break;
         default:
             return nil;
-    }
-    
-    const NXArchInfo *archInfo = NXGetArchInfoFromCpuType(swap32(header->cputype), swap32(header->cpusubtype));
-    if (archInfo != NULL) {
-        printf("Architecture: %s\n", archInfo->name);
     }
     
     uint32_t commandCount = swap32(header->ncmds);

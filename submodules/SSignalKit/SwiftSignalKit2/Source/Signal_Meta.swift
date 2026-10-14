@@ -267,7 +267,7 @@ public func deferred<T, E>(_ generator: @escaping() -> Signal<T, E>) -> Signal<T
 
 public func debug_measureTimeToFirstEvent<T, E>(label: String) -> (Signal<T, E>) -> Signal<T, E> {
     return { signal in
-        #if DEBUG || true
+        #if DEBUG
         if "".isEmpty {
             var isFirst = true
             return Signal { subscriber in

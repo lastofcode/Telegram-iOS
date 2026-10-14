@@ -180,7 +180,6 @@ public final class SharedDisplayLinkDriver {
                     
                     if displayLink.preferredFrameRateRange != frameRateRange {
                         displayLink.preferredFrameRateRange = frameRateRange
-                        print("SharedDisplayLinkDriver: switch to \(frameRateRange)")
                     }
                 }
             }
@@ -379,4 +378,3 @@ public final class ConstantDisplayLinkAnimator {
         self.update()
     }
 }
-

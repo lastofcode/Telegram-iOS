@@ -14,7 +14,9 @@ GLuint setup_texture(NSString *fileName, UIColor *color)
 {
     CGImageRef spriteImage = [[UIImage imageNamed:fileName] CGImage];
     if (!spriteImage) {
-        NSLog(@"Failed to load image %@", fileName);
+#if DEBUG
+        NSLog(@"Failed to load intro image");
+#endif
         return -1;
     }
 
@@ -56,6 +58,5 @@ GLuint setup_texture(NSString *fileName, UIColor *color)
     free(spriteData);
     return texName;
 }
-
 
 

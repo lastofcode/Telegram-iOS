@@ -372,7 +372,6 @@ API_AVAILABLE(ios(10))
 }
 
 + (DeviceSpecificEncryptionParameters * _Nonnull)deviceSpecificEncryptionParameters:(NSString * _Nonnull)rootPath baseAppBundleId:(NSString * _Nonnull)baseAppBundleId {
-    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     
     NSString *filePath = [rootPath stringByAppendingPathComponent:@".tempkey"];
     //NSString *encryptedPath = [rootPath stringByAppendingPathComponent:@".tempkeyEncrypted"];
@@ -457,9 +456,6 @@ API_AVAILABLE(ios(10))
             }
         }
     }*/
-    
-    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
-    NSLog(@"deviceSpecificEncryptionParameters took %f ms", (endTime - startTime) * 1000.0);
     
     NSData *key = [resultData subdataWithRange:NSMakeRange(0, 32)];
     NSData *salt = [resultData subdataWithRange:NSMakeRange(32, 16)];

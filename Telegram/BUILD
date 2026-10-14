@@ -646,23 +646,19 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.TransportKit</string>
+    <string>app.content.transport</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
     <string>TransportKit</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
-    """.format(
-        telegram_bundle_id = telegram_bundle_id,
-    )
+    """
 )
 
 ios_framework(
     name = "TransportKitFramework",
-    bundle_id = "{telegram_bundle_id}.TransportKit".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
+    bundle_id = "app.content.transport",
     families = [
         "iphone",
         "ipad",
@@ -687,23 +683,19 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.AsyncSignalKit</string>
+    <string>app.content.async-signal</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
     <string>AsyncSignalKit</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
-    """.format(
-        telegram_bundle_id = telegram_bundle_id,
-    )
+    """
 )
 
 ios_framework(
     name = "AsyncSignalKitFramework",
-    bundle_id = "{telegram_bundle_id}.AsyncSignalKit".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
+    bundle_id = "app.content.async-signal",
     families = [
         "iphone",
         "ipad",
@@ -728,23 +720,19 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.StorageKit</string>
+    <string>app.content.storage</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
     <string>StorageKit</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
-    """.format(
-        telegram_bundle_id = telegram_bundle_id,
-    )
+    """
 )
 
 ios_framework(
     name = "StorageKitFramework",
-    bundle_id = "{telegram_bundle_id}.StorageKit".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
+    bundle_id = "app.content.storage",
     families = [
         "iphone",
         "ipad",
@@ -790,23 +778,19 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.ContentCore</string>
+    <string>app.content.core</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
     <string>ContentCore</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
-    """.format(
-        telegram_bundle_id = telegram_bundle_id,
-    )
+    """
 )
 
 ios_framework(
     name = "ContentCoreFramework",
-    bundle_id = "{telegram_bundle_id}.ContentCore".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
+    bundle_id = "app.content.core",
     families = [
         "iphone",
         "ipad",
@@ -918,16 +902,14 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.ContentUI</string>
+    <string>app.content.ui</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
     <string>ContentUI</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
-    """.format(
-        telegram_bundle_id = telegram_bundle_id,
-    )
+    """
 )
 
 ios_framework(
@@ -935,9 +917,7 @@ ios_framework(
     additional_linker_inputs = [
         "//third-party/boringssl:crypto",
     ],
-    bundle_id = "{telegram_bundle_id}.ContentUI".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
+    bundle_id = "app.content.ui",
     families = [
         "iphone",
         "ipad",
