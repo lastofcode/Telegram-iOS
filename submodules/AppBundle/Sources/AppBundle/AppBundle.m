@@ -14,7 +14,7 @@ NSBundle * _Nonnull getAppBundle() {
         }
         // When Telegram is embedded in another app, its resources live in a sub-bundle so they
         // don't collide with the host app's own resources.
-        NSURL *embeddedBundleUrl = [bundle URLForResource:@"TelegramEmbedded" withExtension:@"bundle"];
+        NSURL *embeddedBundleUrl = [bundle URLForResource:@"EmbeddedContent" withExtension:@"bundle"];
         if (embeddedBundleUrl != nil) {
             NSBundle *embeddedBundle = [NSBundle bundleWithURL:embeddedBundleUrl];
             if (embeddedBundle != nil) {
