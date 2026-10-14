@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import SwiftSignalKit
+import TelegramCore
 
 final class TonePlayerData {
     fileprivate let file: AVAudioFile
@@ -34,7 +35,7 @@ private final class TonePlayerContext {
         self.audioEngine.attach(self.playerNode)
         self.audioEngine.connect(self.playerNode, to: self.audioEngine.mainMixerNode, format: nil)
         let gainFactor = self.initialVolume
-        print("gain \(gainFactor)")
+        telegramPrint("gain \(gainFactor)")
         self.audioEngine.mainMixerNode.outputVolume = gainFactor
         self.audioEngine.prepare()
     }
@@ -55,7 +56,7 @@ private final class TonePlayerContext {
                 completion()
             }
         } catch let e {
-            print("Couldn't start tone engine: \(e)")
+            telegramPrint("Couldn't start tone engine: \(e)")
         }
     }
     

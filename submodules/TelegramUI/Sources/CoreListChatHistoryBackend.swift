@@ -1,4 +1,5 @@
 import UIKit
+import TelegramCore
 import AsyncDisplayKit
 import SwiftSignalKit
 import Display
@@ -2035,7 +2036,7 @@ private final class CoreListNodeHostView: UIView, CoreListItemView {
                 itemNode.apparentHeight = height
                 self.lastHeight = height
             } else {
-                print("[CoreList] async-only item, no synchronous node: \(type(of: self.listItem))")
+                telegramPrint("[CoreList] async-only item, no synchronous node: \(type(of: self.listItem))")
                 self.lastHeight = 0.0
             }
         } else {
@@ -2069,7 +2070,7 @@ private final class CoreListNodeHostView: UIView, CoreListItemView {
                 self.addSubview(node.view)
                 self.lastHeight = height
             } else {
-                print("[CoreList] async-only item, no synchronous node: \(type(of: listItem))")
+                telegramPrint("[CoreList] async-only item, no synchronous node: \(type(of: listItem))")
                 self.lastHeight = 0.0
             }
         }

@@ -1,5 +1,6 @@
 #if targetEnvironment(simulator)
 import UIKit
+import TelegramCore
 import AsyncDisplayKit
 import Display
 import GlassBackgroundComponent
@@ -255,13 +256,13 @@ final class ContextMenuMorphDebugController: ViewController {
                     precondition(button.superview === self.view && button.frame == originalFrame && button.alpha == 1 && !button.isHidden)
                     button.transform = originalTransform
                     button.layer.mask = originalMask
-                    NSLog("[MorphIntegration] PASS \(index + 1)/26 \(self.shapes[index % 6].0)")
+                    telegramPrint("[MorphIntegration] PASS \(index + 1)/26 \(self.shapes[index % 6].0)")
                     DispatchQueue.main.asyncAfter(deadline: .now() + (index >= 20 ? 0 : 0.15)) { self.check(index + 1) }
                 })
                 if index == 14, let separateMask {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         precondition(separateMask.isHidden, "Real backdrop must stay hidden while the composite preview morphs back")
-                        NSLog("[MorphIntegration] Real source backdrop remains suppressed during composite dismissal")
+                        telegramPrint("[MorphIntegration] Real source backdrop remains suppressed during composite dismissal")
                     }
                 }
             }
@@ -304,20 +305,20 @@ final class ContextMenuMorphDebugController: ViewController {
             precondition(mask.isHidden)
             var second: ContextController?
             first.dismiss(result: .default, completion: {
-                NSLog("[MorphOverlap] older completed; mask hidden=%d", mask.isHidden)
+                telegramPrint("[MorphOverlap] older completed; mask hidden=\(mask.isHidden)")
                 precondition(mask.isHidden, "Older menu revealed the new menu's shared background")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     second?.dismiss(result: .default, completion: {
                         precondition(!mask.isHidden, "Shared background remained hidden after last menu")
                         precondition(foreground.supernode === source && foreground.view.superview === source.view, "Overlapping menus lost the node-backed foreground")
-                        NSLog("[MorphOverlap] ALL CHECKS PASSED")
+                        telegramPrint("[MorphOverlap] ALL CHECKS PASSED")
                         source.view.removeFromSuperview()
                         background.removeFromSuperview()
                     })
                 }
             })
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                NSLog("[MorphOverlap] reopening; mask hidden=%d", mask.isHidden)
+                telegramPrint("[MorphOverlap] reopening; mask hidden=\(mask.isHidden)")
                 let next = makeContextController(presentationData: defaultPresentationData(), source: .reference(Source(source.view, top: false)), items: .single(self.items(for: self.buttons[0])))
                 second = next
                 self.present(next, in: .window(.root))
@@ -334,7 +335,7 @@ final class ContextMenuMorphDebugController: ViewController {
         guard index < 26 else {
             self.running = false
             self.status.text = "ALL 26 INTEGRATION CHECKS PASSED"
-            NSLog("[MorphIntegration] ALL CHECKS PASSED")
+            telegramPrint("[MorphIntegration] ALL CHECKS PASSED")
             return
         }
         self.status.text = "Integration check \(index + 1)/26"

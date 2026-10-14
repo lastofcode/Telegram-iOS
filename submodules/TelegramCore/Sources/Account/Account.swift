@@ -1584,7 +1584,7 @@ public class Account {
         
         /*#if DEBUG
         self.managedOperationsDisposable.add(debugFetchAllStickers(account: self).start(completed: {
-            print("debugFetchAllStickers done")
+            telegramPrint("debugFetchAllStickers done")
         }))
         #endif*/
     }

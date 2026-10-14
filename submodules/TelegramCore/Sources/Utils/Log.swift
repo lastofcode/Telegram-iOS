@@ -7,7 +7,17 @@ import ManagedFile
 
 private let queue = DispatchQueue(label: "org.telegram.Telegram.trace", qos: .utility)
 
+public func telegramPrint(_ value: @autoclosure () -> String) {
+    guard !EmbeddedInHostApp.isEnabled else {
+        return
+    }
+    print(value())
+}
+
 public func trace2(_ what: @autoclosure() -> String) {
+    if EmbeddedInHostApp.isEnabled {
+        return
+    }
     let string = what()
     var rawTime = time_t()
     time(&rawTime)
@@ -25,6 +35,9 @@ public func trace2(_ what: @autoclosure() -> String) {
 }
 
 public func trace1(_ domain: String, what: @autoclosure() -> String) {
+    if EmbeddedInHostApp.isEnabled {
+        return
+    }
     let string = what()
     var rawTime = time_t()
     time(&rawTime)

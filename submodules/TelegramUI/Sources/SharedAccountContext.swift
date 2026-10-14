@@ -588,7 +588,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
         let differenceDisposable = MetaDisposable()
         let _ = (accountManager.accountRecords()
         |> map { view -> (AccountRecordId?, [AccountRecordId: AccountAttributes], (AccountRecordId, Bool)?) in
-            print("SharedAccountContextImpl: records appeared in \(CFAbsoluteTimeGetCurrent() - startTime)")
+            telegramPrint("SharedAccountContextImpl: records appeared in \(CFAbsoluteTimeGetCurrent() - startTime)")
             
             var result: [AccountRecordId: AccountAttributes] = [:]
             for record in view.records {
@@ -716,7 +716,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
             
             differenceDisposable.set((combineLatest(queue: .mainQueue(), mappedAddedAccounts, addedAuthSignal)
             |> deliverOnMainQueue).start(next: { mappedAddedAccounts, authAccount in
-                print("SharedAccountContextImpl: accounts processed in \(CFAbsoluteTimeGetCurrent() - startTime)")
+                telegramPrint("SharedAccountContextImpl: accounts processed in \(CFAbsoluteTimeGetCurrent() - startTime)")
                 
                 var addedAccounts: [(AccountRecordId, Account?, Int32, AccountInitialData)] = []
                 switch mappedAddedAccounts {
@@ -1087,27 +1087,26 @@ public final class SharedAccountContextImpl: SharedAccountContext {
                 return accounts.map { $0.1.account }
             }, presentationData: self.presentationData, appLockContext: self.appLockContext as! AppLockContextImpl)
             
-            let enableSpotlight = accountManager.sharedData(keys: Set([ApplicationSpecificSharedDataKeys.intentsSettings]))
-            |> map { sharedData -> Bool in
-                let intentsSettings: IntentsSettings = sharedData.entries[ApplicationSpecificSharedDataKeys.intentsSettings]?.get(IntentsSettings.self) ?? .defaultSettings
-                return intentsSettings.contacts
-            }
-            |> map { enabled -> Bool in
-                return enabled && !EmbeddedInHostApp.isEnabled
-            }
-            |> distinctUntilChanged
-            self.spotlightDataContext = SpotlightDataContext(appBasePath: applicationBindings.containerPath, accountManager: accountManager, accounts: combineLatest(enableSpotlight, self.activeAccountContexts
-            |> map { _, accounts, _ in
-                return accounts.map { _, account, _ in
-                    return account.account
+            if !EmbeddedInHostApp.isEnabled {
+                let enableSpotlight = accountManager.sharedData(keys: Set([ApplicationSpecificSharedDataKeys.intentsSettings]))
+                |> map { sharedData -> Bool in
+                    let intentsSettings: IntentsSettings = sharedData.entries[ApplicationSpecificSharedDataKeys.intentsSettings]?.get(IntentsSettings.self) ?? .defaultSettings
+                    return intentsSettings.contacts
                 }
-            }) |> map { enableSpotlight, accounts in
-                if enableSpotlight {
-                    return accounts
-                } else {
-                    return []
-                }
-            })
+                |> distinctUntilChanged
+                self.spotlightDataContext = SpotlightDataContext(appBasePath: applicationBindings.containerPath, accountManager: accountManager, accounts: combineLatest(enableSpotlight, self.activeAccountContexts
+                |> map { _, accounts, _ in
+                    return accounts.map { _, account, _ in
+                        return account.account
+                    }
+                }) |> map { enableSpotlight, accounts in
+                    if enableSpotlight {
+                        return accounts
+                    } else {
+                        return []
+                    }
+                })
+            }
         }
         
         /*if #available(iOS 13.0, *) {

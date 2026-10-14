@@ -1671,7 +1671,7 @@ public func test_loginAndDeleteAccount(
             forcedPasswordSetupNotice: { _ in nil }
         )
         |> mapError { error -> TestLoginAndDeleteAccountError in
-            NSLog("[DeleteAccount] sendAuthorizationCode error: \(error)")
+            telegramPrint("[DeleteAccount] sendAuthorizationCode error: \(error)")
             return .generic
         }
         |> mapToSignal { result -> Signal<(UnauthorizedAccount, UnauthorizedAccountStateContents), TestLoginAndDeleteAccountError> in

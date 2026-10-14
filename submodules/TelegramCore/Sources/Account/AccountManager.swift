@@ -310,7 +310,7 @@ public func performAppGroupUpgrades(appGroupPath: String, rootPath: String) {
         var mutableUrl = URL(fileURLWithPath: rootPath)
         try mutableUrl.setResourceValues(resourceValues)
     } catch let e {
-        print("\(e)")
+        telegramPrint("\(e)")
     }
 }
 

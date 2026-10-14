@@ -684,7 +684,7 @@ final class ManagedAudioRecorderContext {
                 /*let timestamp = CFAbsoluteTimeGetCurrent()
                 if !self.audioLevelPeakUpdate.isZero {
                     let delta = timestamp - self.audioLevelPeakUpdate
-                    print("level = \(level), delta = \(delta)")
+                    telegramPrint("level = \(level), delta = \(delta)")
                 }
                 self.audioLevelPeakUpdate = timestamp*/
                 self.micLevel.set(level)

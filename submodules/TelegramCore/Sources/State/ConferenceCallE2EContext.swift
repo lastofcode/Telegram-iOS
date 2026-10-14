@@ -211,7 +211,7 @@ public final class ConferenceCallE2EContext {
             }
             
             #if DEBUG
-            print("Latencies: \(participantLatencies)")
+            telegramPrint("Latencies: \(participantLatencies)")
             #endif
             
             if hadFailure {

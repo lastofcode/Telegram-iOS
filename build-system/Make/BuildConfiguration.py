@@ -77,7 +77,6 @@ def build_configuration_from_json(path):
             'is_appstore_build',
             'appstore_id',
             'app_specific_url_scheme',
-            'premium_iap_product_id',
             'enable_siri',
             'enable_icloud'
         ]
@@ -94,7 +93,8 @@ def build_configuration_from_json(path):
             is_appstore_build=configuration_dict['is_appstore_build'],
             appstore_id=configuration_dict['appstore_id'],
             app_specific_url_scheme=configuration_dict['app_specific_url_scheme'],
-            premium_iap_product_id=configuration_dict['premium_iap_product_id'],
+            # Only written to variables.bzl, which no target reads.
+            premium_iap_product_id=configuration_dict.get('premium_iap_product_id', ''),
             enable_siri=configuration_dict['enable_siri'],
             enable_icloud=configuration_dict['enable_icloud']
         )

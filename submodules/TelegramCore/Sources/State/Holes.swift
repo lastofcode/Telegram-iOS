@@ -454,7 +454,7 @@ func fetchMessageHistoryHole(accountPeerId: PeerId, source: FetchMessageHistoryH
                 return .single(FetchMessageHistoryHoleResult(removedIndices: IndexSet(), strictRemovedIndices: IndexSet(), actualPeerId: nil, actualThreadId: nil, ids: []))
             }
             
-            print("fetchMessageHistoryHole for \(peerInput) direction \(direction) space \(space)")
+            telegramPrint("fetchMessageHistoryHole for \(peerInput) direction \(direction) space \(space)")
             Logger.shared.log("fetchMessageHistoryHole", "fetch for \(peerInput) direction \(direction) space \(space)")
             let request: Signal<Api.messages.Messages, MTRpcError>
             var implicitelyFillHole = false
@@ -1092,7 +1092,7 @@ func fetchMessageHistoryHole(accountPeerId: PeerId, source: FetchMessageHistoryH
                             }
                         }
                         
-                        print("fetchMessageHistoryHole for \(peerInput) space \(space) done")
+                        telegramPrint("fetchMessageHistoryHole for \(peerInput) space \(space) done")
                         
                         if ids.count == 0 || implicitelyFillHole {
                             filledRange = minMaxRange

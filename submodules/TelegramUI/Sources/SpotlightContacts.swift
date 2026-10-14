@@ -121,7 +121,7 @@ private final class SpotlightIndexStorage {
                     continue
                 }
                 
-                print("Spotlight: updating \(item.firstName) \(item.lastName)")
+                telegramPrint("Spotlight: updating \(item.firstName) \(item.lastName)")
                 let path = self.path(peerId: peerId)
                 let _ = try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
                 

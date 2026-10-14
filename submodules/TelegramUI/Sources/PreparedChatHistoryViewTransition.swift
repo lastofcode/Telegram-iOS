@@ -244,7 +244,7 @@ func preparedChatHistoryViewTransition(from fromView: ChatHistoryView?, to toVie
                 for entry in toView.filteredEntries {
                     if isSavedMusic {
                         if case let .message(messageIndex) = scrollIndex.index, messageIndex.id == entry.index.id {
-                            print(messageIndex.id)
+                            telegramPrint("\(messageIndex.id)")
                             scrollToItem = ListViewScrollToItem(index: index, position: position, animated: animated, curve: curve, directionHint: directionHint, displayLink: displayLink)
                             break
                         }
