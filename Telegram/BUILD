@@ -641,16 +641,16 @@ plist_fragment(
 )
 
 plist_fragment(
-    name = "MtProtoKitInfoPlist",
+    name = "TransportKitInfoPlist",
     extension = "plist",
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.MtProtoKit</string>
+    <string>{telegram_bundle_id}.TransportKit</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
-    <string>MtProtoKit</string>
+    <string>TransportKit</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     """.format(
@@ -659,8 +659,8 @@ plist_fragment(
 )
 
 ios_framework(
-    name = "MtProtoKitFramework",
-    bundle_id = "{telegram_bundle_id}.MtProtoKit".format(
+    name = "TransportKitFramework",
+    bundle_id = "{telegram_bundle_id}.TransportKit".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
     families = [
@@ -668,7 +668,7 @@ ios_framework(
         "ipad",
     ],
     infoplists = [
-        ":MtProtoKitInfoPlist",
+        ":TransportKitInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
@@ -682,16 +682,16 @@ ios_framework(
 )
 
 plist_fragment(
-    name = "SwiftSignalKitInfoPlist",
+    name = "AsyncSignalKitInfoPlist",
     extension = "plist",
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.SwiftSignalKit</string>
+    <string>{telegram_bundle_id}.AsyncSignalKit</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
-    <string>SwiftSignalKit</string>
+    <string>AsyncSignalKit</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     """.format(
@@ -700,8 +700,8 @@ plist_fragment(
 )
 
 ios_framework(
-    name = "SwiftSignalKitFramework",
-    bundle_id = "{telegram_bundle_id}.SwiftSignalKit".format(
+    name = "AsyncSignalKitFramework",
+    bundle_id = "{telegram_bundle_id}.AsyncSignalKit".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
     families = [
@@ -709,7 +709,7 @@ ios_framework(
         "ipad",
     ],
     infoplists = [
-        ":SwiftSignalKitInfoPlist",
+        ":AsyncSignalKitInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
@@ -723,16 +723,16 @@ ios_framework(
 )
 
 plist_fragment(
-    name = "PostboxInfoPlist",
+    name = "StorageKitInfoPlist",
     extension = "plist",
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.Postbox</string>
+    <string>{telegram_bundle_id}.StorageKit</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
-    <string>Postbox</string>
+    <string>StorageKit</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     """.format(
@@ -741,8 +741,8 @@ plist_fragment(
 )
 
 ios_framework(
-    name = "PostboxFramework",
-    bundle_id = "{telegram_bundle_id}.Postbox".format(
+    name = "StorageKitFramework",
+    bundle_id = "{telegram_bundle_id}.StorageKit".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
     families = [
@@ -750,13 +750,13 @@ ios_framework(
         "ipad",
     ],
     infoplists = [
-        ":PostboxInfoPlist",
+        ":StorageKitInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
     ],
     frameworks = [
-        ":SwiftSignalKitFramework",
+        ":AsyncSignalKitFramework",
     ],
     minimum_os_version = minimum_os_version,
     extension_safe = True,
@@ -785,16 +785,16 @@ plist_fragment(
 )
 
 plist_fragment(
-    name = "TelegramCoreInfoPlist",
+    name = "ContentCoreInfoPlist",
     extension = "plist",
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.TelegramCore</string>
+    <string>{telegram_bundle_id}.ContentCore</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
-    <string>TelegramCore</string>
+    <string>ContentCore</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     """.format(
@@ -803,8 +803,8 @@ plist_fragment(
 )
 
 ios_framework(
-    name = "TelegramCoreFramework",
-    bundle_id = "{telegram_bundle_id}.TelegramCore".format(
+    name = "ContentCoreFramework",
+    bundle_id = "{telegram_bundle_id}.ContentCore".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
     families = [
@@ -812,15 +812,15 @@ ios_framework(
         "ipad",
     ],
     infoplists = [
-        ":TelegramCoreInfoPlist",
+        ":ContentCoreInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
     ],
     frameworks = [
-        ":MtProtoKitFramework",
-        ":SwiftSignalKitFramework",
-        ":PostboxFramework",
+        ":TransportKitFramework",
+        ":AsyncSignalKitFramework",
+        ":StorageKitFramework",
     ],
     minimum_os_version = minimum_os_version,
     extension_safe = True,
@@ -913,16 +913,16 @@ sh_binary(
 )
 
 plist_fragment(
-    name = "TelegramUIInfoPlist",
+    name = "ContentUIInfoPlist",
     extension = "plist",
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>{telegram_bundle_id}.TelegramUI</string>
+    <string>{telegram_bundle_id}.ContentUI</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
-    <string>TelegramUI</string>
+    <string>ContentUI</string>
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     """.format(
@@ -931,11 +931,11 @@ plist_fragment(
 )
 
 ios_framework(
-    name = "TelegramUIFramework",
+    name = "ContentUIFramework",
     additional_linker_inputs = [
         "//third-party/boringssl:crypto",
     ],
-    bundle_id = "{telegram_bundle_id}.TelegramUI".format(
+    bundle_id = "{telegram_bundle_id}.ContentUI".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
     families = [
@@ -943,16 +943,16 @@ ios_framework(
         "ipad",
     ],
     infoplists = [
-        ":TelegramUIInfoPlist",
+        ":ContentUIInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
     ],
     frameworks = [
-        ":MtProtoKitFramework",
-        ":SwiftSignalKitFramework",
-        ":PostboxFramework",
-        ":TelegramCoreFramework",
+        ":TransportKitFramework",
+        ":AsyncSignalKitFramework",
+        ":StorageKitFramework",
+        ":ContentCoreFramework",
     ],
     minimum_os_version = minimum_os_version,
     extension_safe = True,
@@ -1054,7 +1054,7 @@ ios_extension(
     }),
     deps = [":ShareExtensionLib"],
     frameworks = [
-        ":TelegramUIFramework"
+        ":ContentUIFramework"
     ],
 )
 
@@ -1162,7 +1162,7 @@ ios_extension(
     }),
     deps = [":NotificationContentExtensionLib"],
     frameworks = [
-        ":TelegramUIFramework"
+        ":ContentUIFramework"
     ],
 )
 
@@ -1275,9 +1275,9 @@ ios_extension(
         ":WidgetExtensionLib",
     ],
     frameworks = [
-        ":SwiftSignalKitFramework",
-        ":PostboxFramework",
-        ":TelegramCoreFramework",
+        ":AsyncSignalKitFramework",
+        ":StorageKitFramework",
+        ":ContentCoreFramework",
     ],
     visibility = [
         "//visibility:public",
@@ -1442,9 +1442,9 @@ ios_extension(
     }),
     deps = [":IntentsExtensionLib"],
     frameworks = [
-        ":SwiftSignalKitFramework",
-        ":PostboxFramework",
-        ":TelegramCoreFramework",
+        ":AsyncSignalKitFramework",
+        ":StorageKitFramework",
+        ":ContentCoreFramework",
     ],
 )
 
@@ -1537,8 +1537,8 @@ ios_extension(
     }),
     deps = [":BroadcastUploadExtensionLib"],
     frameworks = [
-        ":TelegramUIFramework",
-        ":SwiftSignalKitFramework",
+        ":ContentUIFramework",
+        ":AsyncSignalKitFramework",
     ],
 )
 
@@ -1597,11 +1597,11 @@ ios_extension(
     }),
     deps = ["//Telegram/NotificationService:NotificationServiceExtensionLib"],
     frameworks = [
-        ":MtProtoKitFramework",
-        ":SwiftSignalKitFramework",
-        ":PostboxFramework",
-        ":TelegramCoreFramework",
-        ":TelegramUIFramework",
+        ":TransportKitFramework",
+        ":AsyncSignalKitFramework",
+        ":StorageKitFramework",
+        ":ContentCoreFramework",
+        ":ContentUIFramework",
     ],
 )
 
@@ -1856,11 +1856,11 @@ ios_application(
         #":DefaultAppIcon",
     ],
     frameworks = [
-        ":MtProtoKitFramework",
-        ":SwiftSignalKitFramework",
-        ":PostboxFramework",
-        ":TelegramCoreFramework",
-        ":TelegramUIFramework",
+        ":TransportKitFramework",
+        ":AsyncSignalKitFramework",
+        ":StorageKitFramework",
+        ":ContentCoreFramework",
+        ":ContentUIFramework",
     ],
     strings = [
         ":AppStringResources",
