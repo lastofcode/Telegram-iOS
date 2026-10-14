@@ -23,7 +23,7 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>org.telegram.MetalEngineMetalSources</string>
+    <string>app.content.resources.metalengine</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>

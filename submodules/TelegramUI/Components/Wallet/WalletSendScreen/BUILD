@@ -7,7 +7,7 @@ plist_fragment(
     extension = "plist",
     template = """
     <key>CFBundleIdentifier</key>
-    <string>org.telegram.WalletSendAmountMetalSources</string>
+    <string>app.content.resources.walletsendmetal</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>

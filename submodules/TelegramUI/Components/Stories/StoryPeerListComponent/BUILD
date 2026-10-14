@@ -22,7 +22,7 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>org.telegram.StoryPeerList</string>
+    <string>app.content.resources.storypeerlist</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>

@@ -22,7 +22,7 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>org.telegram.WallpaperBackgroundNode</string>
+    <string>app.content.resources.wallpaper</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>

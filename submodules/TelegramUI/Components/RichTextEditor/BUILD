@@ -19,7 +19,7 @@ plist_fragment(
     template =
     """
     <key>CFBundleIdentifier</key>
-    <string>org.telegram.RichTextEditorUIKitResources</string>
+    <string>app.content.resources.richtexteditor</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleName</key>
