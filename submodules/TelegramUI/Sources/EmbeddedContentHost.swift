@@ -1,14 +1,8 @@
 import Foundation
 import UIKit
 
-/// Runs Telegram inside another app's process and scene.
-///
-/// The host app loads TelegramUIFramework at runtime and drives Telegram through this class
-/// (looked up with `NSClassFromString("TelegramEmbeddedHost")`), so the host never links
-/// against Telegram's Swift modules. Telegram's window is placed on top of the host's window
-/// while shown and hidden again afterwards; while hidden, Telegram is treated as backgrounded.
-@objc(TelegramEmbeddedHost)
-public final class TelegramEmbeddedHost: NSObject {
+@objc(EmbeddedContentHost)
+public final class EmbeddedContentHost: NSObject {
     private static var appDelegate: AppDelegate?
     private static weak var hostWindow: UIWindow?
     private static var exitGestureDelegate: ExitGestureDelegate?
@@ -20,7 +14,6 @@ public final class TelegramEmbeddedHost: NSObject {
         return !window.isHidden
     }
 
-    /// Starts Telegram on first use and puts its window in front of `scene`'s key window.
     @objc public static func show(in scene: UIWindowScene) {
         self.hostWindow = scene.windows.first(where: { $0.isKeyWindow })
 
@@ -47,7 +40,6 @@ public final class TelegramEmbeddedHost: NSObject {
         appDelegate.handleDidBecomeActive()
     }
 
-    /// Hides Telegram's window, returns focus to the host window and takes Telegram offline.
     @objc public static func hide() {
         guard let appDelegate = self.appDelegate, let window = appDelegate.window, !window.isHidden else {
             return
@@ -73,8 +65,6 @@ public final class TelegramEmbeddedHost: NSObject {
         self.appDelegate?.handleDidBecomeActive()
     }
 
-    /// The host is going to the background: hide Telegram so the app switcher snapshot
-    /// and the next launch show the host app.
     @objc public static func sceneDidEnterBackground() {
         self.hide()
     }

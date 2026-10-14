@@ -239,7 +239,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
 }
 
 @objc(AppDelegate) class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, UNUserNotificationCenterDelegate, URLSessionDelegate, URLSessionTaskDelegate {
-    /// True when Telegram runs inside a host app (see TelegramEmbeddedHost) instead of as its own process.
+    /// True when this content runs inside a host app instead of as its own process.
     /// The host owns the application delegate, notifications, push and background tasks.
     /// While embedded, Telegram leaves no trace outside the app group: no log files, no Spotlight
     /// items and no Siri donations, under a neutral data directory name.
