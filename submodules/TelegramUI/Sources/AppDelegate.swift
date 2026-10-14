@@ -241,7 +241,16 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
 @objc(AppDelegate) class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, UNUserNotificationCenterDelegate, URLSessionDelegate, URLSessionTaskDelegate {
     /// True when Telegram runs inside a host app (see TelegramEmbeddedHost) instead of as its own process.
     /// The host owns the application delegate, notifications, push and background tasks.
-    static var isEmbedded = false
+    /// While embedded, Telegram leaves no trace outside the app group: no log files, no Spotlight
+    /// items and no Siri donations, under a neutral data directory name.
+    static var isEmbedded: Bool {
+        get {
+            return EmbeddedInHostApp.isEnabled
+        }
+        set {
+            EmbeddedInHostApp.isEnabled = newValue
+        }
+    }
 
     @objc var window: UIWindow?
     var nativeWindow: (UIWindow & WindowHost)?
@@ -704,7 +713,9 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             isDebugConfiguration = true
         }
         
-        if isDebugConfiguration || buildConfig.isInternalBuild {
+        if AppDelegate.isEmbedded {
+            LoggingSettings.defaultSettings = LoggingSettings(logToFile: false, logToConsole: false, redactSensitiveData: true)
+        } else if isDebugConfiguration || buildConfig.isInternalBuild {
             LoggingSettings.defaultSettings = LoggingSettings(logToFile: true, logToConsole: false, redactSensitiveData: true)
         } else {
             LoggingSettings.defaultSettings = LoggingSettings(logToFile: false, logToConsole: false, redactSensitiveData: true)
@@ -775,8 +786,18 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         }
         
         let logsPath = rootPath + "/logs/app-logs"
-        let _ = try? FileManager.default.createDirectory(atPath: logsPath, withIntermediateDirectories: true, attributes: nil)
-        Logger.setSharedLogger(Logger(rootPath: rootPath, basePath: logsPath))
+        if AppDelegate.isEmbedded {
+            let _ = try? FileManager.default.removeItem(atPath: rootPath + "/logs")
+            let logger = Logger(rootPath: rootPath, basePath: logsPath)
+            logger.logToFile = false
+            logger.logToConsole = false
+            logger.shortLogToFile = false
+            Logger.setSharedLogger(logger)
+            CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["telegram-contacts"], completionHandler: { _ in })
+        } else {
+            let _ = try? FileManager.default.createDirectory(atPath: logsPath, withIntermediateDirectories: true, attributes: nil)
+            Logger.setSharedLogger(Logger(rootPath: rootPath, basePath: logsPath))
+        }
 
         setManagedAudioSessionLogger({ s in
             Logger.shared.log("ManagedAudioSession", s)
@@ -1257,8 +1278,8 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         }
         self.sharedContextPromise.set(sharedContextSignal
         |> mapToSignal { sharedApplicationContext, loggingSettings -> Signal<SharedApplicationContext, NoError> in
-            Logger.shared.logToFile = loggingSettings.logToFile
-            Logger.shared.logToConsole = loggingSettings.logToConsole
+            Logger.shared.logToFile = loggingSettings.logToFile && !AppDelegate.isEmbedded
+            Logger.shared.logToConsole = loggingSettings.logToConsole && !AppDelegate.isEmbedded
             Logger.shared.redactSensitiveData = loggingSettings.redactSensitiveData
             
             return .single(sharedApplicationContext)

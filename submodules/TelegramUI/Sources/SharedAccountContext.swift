@@ -1092,6 +1092,9 @@ public final class SharedAccountContextImpl: SharedAccountContext {
                 let intentsSettings: IntentsSettings = sharedData.entries[ApplicationSpecificSharedDataKeys.intentsSettings]?.get(IntentsSettings.self) ?? .defaultSettings
                 return intentsSettings.contacts
             }
+            |> map { enabled -> Bool in
+                return enabled && !EmbeddedInHostApp.isEnabled
+            }
             |> distinctUntilChanged
             self.spotlightDataContext = SpotlightDataContext(appBasePath: applicationBindings.containerPath, accountManager: accountManager, accounts: combineLatest(enableSpotlight, self.activeAccountContexts
             |> map { _, accounts, _ in

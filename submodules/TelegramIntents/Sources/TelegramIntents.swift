@@ -55,6 +55,9 @@ public enum SendMessageIntentSubject: CaseIterable {
 }
 
 public func donateSendMessageIntent(account: Account, sharedContext: SharedAccountContext, intentContext: SendMessageIntentContext, peerIds: [EnginePeer.Id]) {
+    if EmbeddedInHostApp.isEnabled {
+        return
+    }
     if #available(iOSApplicationExtension 13.2, iOS 13.2, *) {
         let _ = (sharedContext.accountManager.transaction { transaction -> Bool in
             if case .none = transaction.getAccessChallengeData() {

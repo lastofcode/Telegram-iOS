@@ -290,7 +290,7 @@ final class BrowserWebContent: UIView, BrowserContent, WKNavigationDelegate, WKU
         if context.sharedContext.immediateExperimentalUISettings.enablePWA {
             if #available(iOS 17.0, *) {
                 if let parsedUrl = URL(string: url), let host = parsedUrl.host {
-                    let rootPath = context.sharedContext.applicationBindings.containerPath + "/telegram-data"
+                    let rootPath = rootPathForBasePath(context.sharedContext.applicationBindings.containerPath)
                     let pwaPath = rootPath + "/pwa"
                     let uuidPath = pwaPath + "/uuid_\(host)"
                     let uuid: UUID

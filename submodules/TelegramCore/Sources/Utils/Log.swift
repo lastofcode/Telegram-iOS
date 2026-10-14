@@ -102,7 +102,9 @@ public final class Logger {
         }
     }
     public var redactSensitiveData: Bool = true
-    
+    /// Short logs (`critlog-*`) are written regardless of `logToFile`; this turns them off too.
+    public var shortLogToFile: Bool = true
+
     public static func setSharedLogger(_ logger: Logger) {
         sharedLogger = logger
         setPostboxLogger({ s in
@@ -397,6 +399,9 @@ public final class Logger {
     }
     
     public func shortLog(_ tag: String, _ what: @autoclosure () -> String) {
+        if !self.shortLogToFile {
+            return
+        }
         let string = what()
         
         var rawTime = time_t()
