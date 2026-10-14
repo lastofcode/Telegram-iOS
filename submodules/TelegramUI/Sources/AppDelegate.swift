@@ -1554,7 +1554,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         
         self.resetBadge()
         
-        if #available(iOS 9.1, *) {
+        if #available(iOS 9.1, *), !AppDelegate.isEmbedded {
             self.quickActionsDisposable.set((self.context.get()
             |> mapToSignal { context -> Signal<[ApplicationShortcutItem], NoError> in
                 if let context = context {
@@ -2020,6 +2020,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     }
 
     private func resetBadge() {
+        // The icon and its badge belong to the host app.
+        if AppDelegate.isEmbedded {
+            return
+        }
         var resetOnce = true
         self.badgeDisposable.set((self.context.get()
         |> mapToSignal { context -> Signal<Int32, NoError> in

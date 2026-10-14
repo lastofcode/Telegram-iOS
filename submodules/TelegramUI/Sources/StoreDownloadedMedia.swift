@@ -57,7 +57,7 @@ private final class DownloadedMediaStoreContext {
         self.disposable?.dispose()
     }
     
-    func start(postbox: Postbox, collection: Signal<PHAssetCollection, NoError>, peerId: EnginePeer.Id, timestamp: Int32, media: AnyMediaReference, completed: @escaping () -> Void) {
+    func start(postbox: Postbox, collection: Signal<PHAssetCollection?, NoError>, peerId: EnginePeer.Id, timestamp: Int32, media: AnyMediaReference, completed: @escaping () -> Void) {
         var resource: TelegramMediaResource?
         if let image = media.media as? TelegramMediaImage {
             resource = largestImageRepresentation(image.representations)?.resource
@@ -124,7 +124,7 @@ private final class DownloadedMediaStoreContext {
                 }
             }
             |> take(1)
-            |> mapToSignal { store -> Signal<(PHAssetCollection, MediaResourceData), NoError> in
+            |> mapToSignal { store -> Signal<(PHAssetCollection?, MediaResourceData), NoError> in
                 if !store {
                     return .complete()
                 } else {
@@ -137,10 +137,11 @@ private final class DownloadedMediaStoreContext {
                 }
                 
                 var filename: String?
+                let filenamePrefix = EmbeddedInHostApp.isEnabled ? "" : "telegram-"
                 if let image = media.media as? TelegramMediaImage {
-                    filename = "telegram-photo-\(image.imageId.namespace)-\(image.imageId.id).jpg"
+                    filename = "\(filenamePrefix)photo-\(image.imageId.namespace)-\(image.imageId.id).jpg"
                 } else if let file = media.media as? TelegramMediaFile {
-                    filename = "telegram-video-\(file.fileId.namespace)-\(file.fileId.id).mov"
+                    filename = "\(filenamePrefix)video-\(file.fileId.namespace)-\(file.fileId.id).mov"
                 }
                 let creationDate = Date(timeIntervalSince1970: TimeInterval(timestamp))
                 
@@ -155,9 +156,8 @@ private final class DownloadedMediaStoreContext {
                                 }
                                 creationRequest.addResource(with: .photo, data: fileData, options: options)
                                 creationRequest.creationDate = creationDate
-                                let request = PHAssetCollectionChangeRequest(for: collection)
-                                if let placeholderForCreatedAsset = creationRequest.placeholderForCreatedAsset {
-                                    request?.addAssets([placeholderForCreatedAsset] as NSArray)
+                                if let collection = collection, let placeholderForCreatedAsset = creationRequest.placeholderForCreatedAsset {
+                                    PHAssetCollectionChangeRequest(for: collection)?.addAssets([placeholderForCreatedAsset] as NSArray)
                                 }
                             }
                         })
@@ -173,9 +173,8 @@ private final class DownloadedMediaStoreContext {
                                 }
                                 creationRequest.addResource(with: .video, fileURL: URL(fileURLWithPath: tempFile.path), options: options)
                                 creationRequest.creationDate = creationDate
-                                let request = PHAssetCollectionChangeRequest(for: collection)
-                                if let placeholderForCreatedAsset = creationRequest.placeholderForCreatedAsset {
-                                    request?.addAssets([placeholderForCreatedAsset] as NSArray)
+                                if let collection = collection, let placeholderForCreatedAsset = creationRequest.placeholderForCreatedAsset {
+                                    PHAssetCollectionChangeRequest(for: collection)?.addAssets([placeholderForCreatedAsset] as NSArray)
                                 }
                             }
                         }, completionHandler: { _, error in
@@ -194,7 +193,12 @@ private final class DownloadedMediaStoreContext {
                 
                 options.predicate = NSPredicate(format: "creationDate == %@", creationDate as CVarArg)
                 var alreadyStored = false
-                let assets = PHAsset.fetchAssets(in: collection, options: options)
+                let assets: PHFetchResult<PHAsset>
+                if let collection = collection {
+                    assets = PHAsset.fetchAssets(in: collection, options: options)
+                } else {
+                    assets = PHAsset.fetchAssets(with: options)
+                }
                 assets.enumerateObjects({ asset, _, done in
                     if #available(iOSApplicationExtension 9.0, iOS 9.0, *) {
                         if let assetResource = PHAssetResource.assetResources(for: asset).first {
@@ -225,14 +229,19 @@ private final class DownloadedMediaStoreManagerPrivateImpl {
     private var nextId: Int32 = 1
     private var storeContexts: [MediaId: DownloadedMediaStoreContext] = [:]
     
-    private let appSpecificAssetCollectionValue: Promise<PHAssetCollection>
+    private let appSpecificAssetCollectionValue: Promise<PHAssetCollection?>
     private let storeSettings = Promise<MediaAutoDownloadSettings>()
     
     init(queue: Queue, postbox: Postbox, accountManager: AccountManager<TelegramAccountManagerTypes>) {
         self.queue = queue
         self.postbox = postbox
         
-        self.appSpecificAssetCollectionValue = Promise(initializeOnFirstAccess: appSpecificAssetCollection())
+        // While embedded, saved media goes to the camera roll only, without a "Telegram" album.
+        if EmbeddedInHostApp.isEnabled {
+            self.appSpecificAssetCollectionValue = Promise(nil)
+        } else {
+            self.appSpecificAssetCollectionValue = Promise(initializeOnFirstAccess: appSpecificAssetCollection() |> map(Optional.init))
+        }
         self.storeSettings.set(accountManager.sharedData(keys: [ApplicationSpecificSharedDataKeys.automaticMediaDownloadSettings])
         |> map { sharedData -> MediaAutoDownloadSettings in
             if let settings = sharedData.entries[ApplicationSpecificSharedDataKeys.automaticMediaDownloadSettings]?.get(MediaAutoDownloadSettings.self) {

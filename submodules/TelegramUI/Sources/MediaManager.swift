@@ -21,6 +21,15 @@ enum SharedMediaPlayerGroup: Int {
     case voiceAndInstantVideo = 1
 }
 
+/// Lock screen and Control Center show what is playing under the app's name. While embedded that
+/// would be the host's name over Telegram's titles and senders, so nothing is published.
+private func setSystemNowPlayingInfo(_ info: [String: Any]) {
+    if EmbeddedInHostApp.isEnabled {
+        return
+    }
+    MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+}
+
 private let sharedAudioSession: ManagedAudioSession = {
     let audioSession = ManagedAudioSessionImpl()
     let _ = (audioSession.headsetConnected() |> deliverOnMainQueue).startStandalone(next: { value in
@@ -275,7 +284,7 @@ public final class MediaManagerImpl: NSObject, MediaManager {
                     
                     baseNowPlayingInfo = nowPlayingInfo
                     
-                    MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                    setSystemNowPlayingInfo(nowPlayingInfo)
                 }
                 
                 if previousState != state {
@@ -351,7 +360,7 @@ public final class MediaManagerImpl: NSObject, MediaManager {
                 } else {
                     nowPlayingInfo.removeValue(forKey: MPMediaItemPropertyArtwork)
                 }
-                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                setSystemNowPlayingInfo(nowPlayingInfo)
                 baseNowPlayingInfo = nowPlayingInfo
             }
         }))
@@ -369,7 +378,7 @@ public final class MediaManagerImpl: NSObject, MediaManager {
                     }
                     nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = next.timestamp as NSNumber
                     
-                    MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                    setSystemNowPlayingInfo(nowPlayingInfo)
                 }
             }
         }))

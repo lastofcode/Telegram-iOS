@@ -16,6 +16,10 @@ private let sharedProviderDelegate: CallKitProviderDelegate? = {
 
 public final class CallKitIntegration {
     public static var isAvailable: Bool {
+        // CallKit would list calls in the Phone app's recents under the host app's name.
+        if EmbeddedInHostApp.isEnabled {
+            return false
+        }
         #if targetEnvironment(simulator)
         return false
         #else

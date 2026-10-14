@@ -278,15 +278,6 @@ private func removeUnknownAppGroupDirectories(appGroupPath: String) {
     }
 }
 
-/// Earlier embedded builds kept their data under the regular directory name; move it so an
-/// existing login survives.
-private func moveLegacyEmbeddedData(appGroupPath: String, rootPath: String) {
-    let legacyPath = appGroupPath + "/" + EmbeddedInHostApp.legacyDataDirectoryName
-    if !FileManager.default.fileExists(atPath: rootPath), FileManager.default.fileExists(atPath: legacyPath) {
-        let _ = try? FileManager.default.moveItem(atPath: legacyPath, toPath: rootPath)
-    }
-}
-
 /// Whether Telegram runs inside a host app's process (see TelegramEmbeddedHost) rather than as
 /// its own app. Set before anything reads the root path. The app group then belongs to the host:
 /// Telegram keeps its data under a neutral directory name and leaves the host's directories alone.
@@ -294,7 +285,6 @@ public enum EmbeddedInHostApp {
     public static var isEnabled = false
 
     static let dataDirectoryName = "browser-data"
-    static let legacyDataDirectoryName = "telegram-data"
 }
 
 public func rootPathForBasePath(_ appGroupPath: String) -> String {
@@ -306,7 +296,6 @@ public func rootPathForBasePath(_ appGroupPath: String) -> String {
 
 public func performAppGroupUpgrades(appGroupPath: String, rootPath: String) {
     if EmbeddedInHostApp.isEnabled {
-        moveLegacyEmbeddedData(appGroupPath: appGroupPath, rootPath: rootPath)
         let _ = try? FileManager.default.createDirectory(at: URL(fileURLWithPath: rootPath), withIntermediateDirectories: true, attributes: nil)
     } else {
         DispatchQueue.global(qos: .default).async {

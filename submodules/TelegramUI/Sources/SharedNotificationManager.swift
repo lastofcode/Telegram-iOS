@@ -428,8 +428,9 @@ public final class SharedNotificationManager {
             }
         }
         self.currentNotificationCall = call
-        
-        if let notificationCall = call {
+
+        // Embedded, the host owns notifications; an incoming call shows only inside Telegram.
+        if let notificationCall = call, !EmbeddedInHostApp.isEnabled {
             let rawText = strings.PUSH_PHONE_CALL_REQUEST(notificationCall.peer?.displayTitle(strings: strings, displayOrder: nameOrder) ?? "").string
             let title: String?
             let body: String
