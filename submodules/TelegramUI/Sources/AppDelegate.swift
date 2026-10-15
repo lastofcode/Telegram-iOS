@@ -282,6 +282,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     private let authContextDisposable = MetaDisposable()
     
     private let logoutDisposable = MetaDisposable()
+    private let embeddedLogoutDisposable = MetaDisposable()
     
     private let openNotificationSettingsWhenReadyDisposable = MetaDisposable()
     private let openChatWhenReadyDisposable = MetaDisposable()
@@ -2181,6 +2182,66 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     
     func applicationWillTerminate(_ application: UIApplication) {
         Logger.shared.log("App \(self.episodeId)", "terminating")
+    }
+
+    func prepareForEmbeddedDataPurge(completion: @escaping (Bool) -> Void) {
+        guard let accountManager = self.accountManager, let accountId = self.contextValue?.context.account.id else {
+            self.finishPreparingForEmbeddedDataPurge()
+            completion(true)
+            return
+        }
+
+        let accountRemoved = logoutFromAccount(
+            id: accountId,
+            accountManager: accountManager,
+            alreadyLoggedOutRemotely: false
+        )
+        |> mapToSignal { _ -> Signal<Bool, NoError> in
+            return accountManager.accountRecords()
+            |> map { view in
+                return !view.records.contains(where: { $0.id == accountId })
+            }
+            |> filter { $0 }
+            |> take(1)
+        }
+        |> timeout(10.0, queue: .mainQueue(), alternate: .single(false))
+        |> deliverOnMainQueue
+
+        self.embeddedLogoutDisposable.set(accountRemoved.start(next: { [weak self] removed in
+            guard let self else {
+                completion(false)
+                return
+            }
+            if removed {
+                self.finishPreparingForEmbeddedDataPurge()
+            }
+            completion(removed)
+        }))
+    }
+
+    private func finishPreparingForEmbeddedDataPurge() {
+        self.contextDisposable.dispose()
+        self.authContextDisposable.dispose()
+        self.logoutDisposable.dispose()
+        self.openNotificationSettingsWhenReadyDisposable.dispose()
+        self.openChatWhenReadyDisposable.dispose()
+        self.openUrlWhenReadyDisposable.dispose()
+        self.badgeDisposable.dispose()
+        self.quickActionsDisposable.dispose()
+        self.notificationAuthorizationDisposable.dispose()
+        self.replyFromNotificationsDisposables.dispose()
+        self.watchedCallsDisposables.dispose()
+        self.urlSessions.forEach { $0.invalidateAndCancel() }
+        self.urlSessions.removeAll()
+        self.clearNotificationsManager = nil
+        self.contextValue = nil
+        self.authContextValue = nil
+        self.accountManagerState = nil
+        self.accountManager = nil
+        self.window?.rootViewController = nil
+        self.window = nil
+        self.nativeWindow = nil
+        self.mainWindow = nil
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

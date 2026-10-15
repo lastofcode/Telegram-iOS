@@ -69,6 +69,36 @@ public final class EmbeddedContentHost: NSObject {
         self.hide()
     }
 
+    @objc(prepareForDataPurgeWithCompletion:)
+    public static func prepareForDataPurge(completion: @escaping (Bool) -> Void) {
+        guard let appDelegate = self.appDelegate else {
+            completion(true)
+            return
+        }
+
+        self.hide()
+        appDelegate.prepareForEmbeddedDataPurge { [weak appDelegate] loggedOut in
+            guard loggedOut, let appDelegate else {
+                #if DEBUG
+                print("[EmbeddedContentDataPurge] Telegram logout did not complete")
+                #endif
+                completion(false)
+                return
+            }
+            #if DEBUG
+            print("[EmbeddedContentDataPurge] Telegram logout completed")
+            #endif
+            appDelegate.applicationWillTerminate(UIApplication.shared)
+            self.exitGestureDelegate = nil
+            self.hostWindow = nil
+            self.appDelegate = nil
+
+            DispatchQueue.main.async {
+                completion(true)
+            }
+        }
+    }
+
     private static func installExitGesture(on window: UIWindow) {
         let delegate = ExitGestureDelegate()
         self.exitGestureDelegate = delegate
