@@ -361,7 +361,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
                 
         if applicationBindings.isMainApp {
             self.locationManager = DeviceLocationManager(queue: Queue.mainQueue())
-            self.contactDataManager = DeviceContactDataManagerImpl(accountManager: accountManager)
+            self.contactDataManager = nil
         } else {
             self.locationManager = nil
             self.contactDataManager = nil

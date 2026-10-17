@@ -6,7 +6,6 @@ import TelegramCore
 import SwiftSignalKit
 import Photos
 import CoreLocation
-import Contacts
 import UserNotifications
 import CoreTelephony
 import TelegramPresentationData
@@ -160,29 +159,7 @@ public final class DeviceAccess {
                     return status
                 }
             case .contacts:
-                let status = Signal<AccessType, NoError> { subscriber in
-                    switch CNContactStore.authorizationStatus(for: .contacts) {
-                        case .notDetermined:
-                            subscriber.putNext(.notDetermined)
-                        case .authorized:
-                            subscriber.putNext(.allowed)
-                        case .limited:
-                            subscriber.putNext(.limited)
-                        default:
-                            subscriber.putNext(.denied)
-                    }
-                    subscriber.putCompletion()
-                    return EmptyDisposable
-                }
-                return status
-                |> then(self.contacts
-                    |> mapToSignal { authorized -> Signal<AccessType, NoError> in
-                        if let authorized {
-                            return .single(authorized ? .allowed : .denied)
-                        } else {
-                            return .complete()
-                        }
-                    })
+                return .single(.denied)
             case .cellularData:
                 return Signal { subscriber in
                     if #available(iOSApplicationExtension 9.0, iOS 9.0, *) {
@@ -523,31 +500,8 @@ public final class DeviceAccess {
                             fatalError()
                 }
                 case .contacts:
-                    let _ = (self.contactsPromise.get()
-                    |> take(1)
-                    |> deliverOnMainQueue).start(next: { value in
-                        if let value = value {
-                            completion(value)
-                        } else {
-                            switch CNContactStore.authorizationStatus(for: .contacts) {
-                                case .notDetermined:
-                                    let store = CNContactStore()
-                                    store.requestAccess(for: .contacts, completionHandler: { authorized, _ in
-                                        self.contactsPromise.set(.single(authorized))
-                                        completion(authorized)
-                                    })
-                                case .authorized:
-                                    self.contactsPromise.set(.single(true))
-                                    completion(true)
-                                case .limited:
-                                    self.contactsPromise.set(.single(true))
-                                    completion(true)
-                                default:
-                                    self.contactsPromise.set(.single(false))
-                                    completion(false)
-                            }
-                        }
-                    })
+                    self.contactsPromise.set(.single(false))
+                    completion(false)
                 case .notifications:
                     if let registerForNotifications = registerForNotifications {
                         registerForNotifications { result in

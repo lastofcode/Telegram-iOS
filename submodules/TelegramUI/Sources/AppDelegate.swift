@@ -2220,6 +2220,9 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     }
 
     private func finishPreparingForEmbeddedDataPurge() {
+        self.sharedContextPromise.set(.never())
+        self.context.set(.never())
+        self.authContext.set(.never())
         self.contextDisposable.dispose()
         self.authContextDisposable.dispose()
         self.logoutDisposable.dispose()
@@ -2242,6 +2245,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         self.window = nil
         self.nativeWindow = nil
         self.mainWindow = nil
+        testIsLaunched = false
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
